@@ -1,0 +1,36 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+build:
+  dockerfile: Dockerfile
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    properties:
+      sessionTimeout: 
+        type: number
+        default: 1800000
+        description: "Session timeout in milliseconds (default: 30 minutes)"
+      maxThoughtsPerSession:
+        type: number
+        default: 100
+        description: "Maximum thoughts per session (default: 100)"
+      enableStochasticAlgorithms:
+        type: boolean
+        default: true
+        description: "Enable stochastic algorithm tools"
+      enableSystematicThinking:
+        type: boolean
+        default: true
+        description: "Enable systematic thinking tools"
+      enableVisualization:
+        type: boolean
+        default: true
+        description: "Enable visualization tools"
+    description: "Configuration options for the GoThink MCP server"
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    config => ({command:'node', args:['dist/index.js']})
