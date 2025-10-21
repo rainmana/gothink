@@ -1,0 +1,62 @@
+# Example mental models configuration file
+# This file demonstrates how to define custom mental models for GoThink
+
+models:
+  # High-priority custom model
+  custom_problem_solving:
+    name: "Custom Problem Solving Framework"
+    description: "A comprehensive approach to solving complex problems"
+    steps:
+      - "Step 1: Define the problem clearly and specifically"
+      - "Step 2: Gather all relevant information and data"
+      - "Step 3: Identify constraints and limitations"
+      - "Step 4: Generate multiple potential solutions"
+      - "Step 5: Evaluate each solution against criteria"
+      - "Step 6: Select the best solution and implement"
+      - "Step 7: Monitor results and iterate if needed"
+    category: "problem-solving"
+    priority: 15
+
+  # Medium-priority analytical model
+  data_driven_analysis:
+    name: "Data-Driven Analysis"
+    description: "Systematic approach to analyzing data and drawing insights"
+    steps:
+      - "Step 1: Define the analysis objective"
+      - "Step 2: Collect and clean the data"
+      - "Step 3: Explore the data for patterns"
+      - "Step 4: Apply appropriate analytical methods"
+      - "Step 5: Interpret results and draw conclusions"
+      - "Step 6: Validate findings and check for bias"
+      - "Step 7: Communicate insights effectively"
+    category: "analytical"
+    priority: 8
+
+  # Low-priority creative model
+  creative_ideation:
+    name: "Creative Ideation Process"
+    description: "Structured approach to generating creative ideas"
+    steps:
+      - "Step 1: Set the creative challenge"
+      - "Step 2: Gather diverse perspectives and inputs"
+      - "Step 3: Use brainstorming techniques"
+      - "Step 4: Combine and build on ideas"
+      - "Step 5: Evaluate ideas for feasibility"
+      - "Step 6: Refine and develop promising concepts"
+    category: "creative"
+    priority: 3
+
+  # Override a core model with custom version
+  first_principles:
+    name: "Enhanced First Principles Thinking"
+    description: "An enhanced version of first principles thinking with additional steps"
+    steps:
+      - "Step 1: Identify the problem or question"
+      - "Step 2: Break down into fundamental components"
+      - "Step 3: Question all assumptions"
+      - "Step 4: Research the fundamentals"
+      - "Step 5: Build up from first principles"
+      - "Step 6: Test the new understanding"
+      - "Step 7: Apply and iterate"
+    category: "analytical"
+    priority: 12

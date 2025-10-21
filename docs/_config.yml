@@ -1,0 +1,83 @@
+# Site settings
+title: "GoThink"
+description: "Advanced Thinking Framework for AI Systems"
+baseurl: "/gothink"  # This will be the subpath of your site
+url: "https://rainmana.github.io"  # The base hostname & protocol for your site
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "doc"
+
+# Plugins (GitHub Pages compatible)
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
+
+# Include
+include:
+  - _pages
+
+# SEO
+author: rainmana
+twitter:
+  username: rainmana
+github:
+  username: rainmana
+
+# Theme settings
+theme: minima
+
+# Custom settings
+custom_css:
+  - styles.css
+custom_js:
+  - script.js
+
+# Navigation
+navigation:
+  - title: "Home"
+    url: "/"
+  - title: "Features"
+    url: "/#features"
+  - title: "Mental Models"
+    url: "/#mental-models"
+  - title: "Installation"
+    url: "/#installation"
+  - title: "Usage"
+    url: "/#usage"
+  - title: "API"
+    url: "/#api"
+  - title: "Examples"
+    url: "/#examples"
