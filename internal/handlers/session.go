@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/storage"
+	"github.com/rainmana/gothink/internal/storage"
 )
 
 // SessionHandler handles session management operations

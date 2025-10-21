@@ -11,10 +11,10 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/config"
-	"github.com/waldzellai/gothink/internal/models"
-	"github.com/waldzellai/gothink/internal/storage"
-	"github.com/waldzellai/gothink/internal/types"
+	"github.com/rainmana/gothink/internal/config"
+	"github.com/rainmana/gothink/internal/models"
+	"github.com/rainmana/gothink/internal/storage"
+	"github.com/rainmana/gothink/internal/types"
 )
 
 func main() {

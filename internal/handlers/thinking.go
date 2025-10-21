@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/storage"
-	"github.com/waldzellai/gothink/internal/types"
+	"github.com/rainmana/gothink/internal/storage"
+	"github.com/rainmana/gothink/internal/types"
 )
 
 // ThinkingHandler handles systematic thinking operations
@@ -142,7 +142,7 @@ func (h *ThinkingHandler) MentalModel(w http.ResponseWriter, r *http.Request) {
 		"has_conclusion": request.Conclusion != "",
 		"session_context": map[string]interface{}{
 			"session_id":          request.SessionID,
-			"total_mental_models": len(stats.Stores["mental_models"].(map[string]int)["count"]),
+			"total_mental_models": stats.Stores["mental_models"].(map[string]int)["count"],
 		},
 	}
 

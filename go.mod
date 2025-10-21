@@ -1,4 +1,4 @@
-module github.com/waldzellai/gothink
+module github.com/rainmana/gothink
 
 go 1.23.0
 

@@ -2,6 +2,10 @@
 
 Advanced MCP server combining systematic thinking, mental models, and stochastic algorithms for enhanced AI decision-making.
 
+**Author**: W. Alec Akin ([@rainmana](https://github.com/rainmana)) | [Website](https://alecakin.com/about)
+
+> **Acknowledgments**: This project was inspired by the excellent work of the original GoThink project. We've significantly expanded and refactored it into a comprehensive MCP server with community-driven mental models and advanced thinking frameworks.
+
 ## Overview
 
 GoThink is a comprehensive Model Context Protocol (MCP) server written in Go that combines the best of systematic thinking approaches with advanced stochastic algorithms. It provides AI assistants with powerful tools for:

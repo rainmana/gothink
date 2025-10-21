@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/types"
+	"github.com/rainmana/gothink/internal/types"
 	"gopkg.in/yaml.v3"
 )
 

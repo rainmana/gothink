@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/storage"
-	"github.com/waldzellai/gothink/internal/types"
+	"github.com/rainmana/gothink/internal/storage"
+	"github.com/rainmana/gothink/internal/types"
 )
 
 // DecisionHandler handles decision framework operations

@@ -37,6 +37,9 @@ type Config struct {
 	EnableDetailedLogging bool   `json:"enable_detailed_logging" yaml:"enable_detailed_logging"`
 	LogLevel              string `json:"log_level" yaml:"log_level"`
 
+	// Mental models settings
+	MentalModelsPath string `json:"mental_models_path" yaml:"mental_models_path"`
+
 	// Algorithm defaults
 	AlgorithmDefaults map[string]interface{} `json:"algorithm_defaults" yaml:"algorithm_defaults"`
 }
@@ -112,5 +115,8 @@ func loadFromEnv(cfg *Config) {
 	}
 	if logLevel := os.Getenv("GOTHINK_LOG_LEVEL"); logLevel != "" {
 		cfg.LogLevel = logLevel
+	}
+	if mentalModelsPath := os.Getenv("GOTHINK_MENTAL_MODELS_PATH"); mentalModelsPath != "" {
+		cfg.MentalModelsPath = mentalModelsPath
 	}
 }

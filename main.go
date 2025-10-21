@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/waldzellai/gothink/internal/config"
-	"github.com/waldzellai/gothink/internal/server"
+	"github.com/rainmana/gothink/internal/config"
+	"github.com/rainmana/gothink/internal/server"
 )
 
 func main() {

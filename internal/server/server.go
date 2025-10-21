@@ -9,10 +9,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/config"
-	"github.com/waldzellai/gothink/internal/handlers"
-	"github.com/waldzellai/gothink/internal/middleware"
-	"github.com/waldzellai/gothink/internal/storage"
+	"github.com/rainmana/gothink/internal/config"
+	"github.com/rainmana/gothink/internal/handlers"
+	"github.com/rainmana/gothink/internal/middleware"
+	"github.com/rainmana/gothink/internal/storage"
 )
 
 // Server represents the GoThink MCP server

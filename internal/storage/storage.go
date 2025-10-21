@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/waldzellai/gothink/internal/config"
-	"github.com/waldzellai/gothink/internal/types"
+	"github.com/rainmana/gothink/internal/config"
+	"github.com/rainmana/gothink/internal/types"
 )
 
 // Storage manages all data storage for the GoThink server
@@ -356,16 +356,16 @@ func (s *Storage) GetSessionStats(sessionID string) (*types.SessionStatistics, e
 
 	// Collect tools used
 	toolsUsed := make(map[string]bool)
-	for _, thought := range thoughts {
+	if len(thoughts) > 0 {
 		toolsUsed["sequential-thinking"] = true
 	}
-	for _, model := range mentalModels {
+	if len(mentalModels) > 0 {
 		toolsUsed["mental-model"] = true
 	}
 	for _, algorithm := range stochasticAlgorithms {
 		toolsUsed["stochastic-"+algorithm.Algorithm] = true
 	}
-	for _, decision := range decisions {
+	if len(decisions) > 0 {
 		toolsUsed["decision-framework"] = true
 	}
 	for _, visual := range visualData {
