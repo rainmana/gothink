@@ -1,0 +1,191 @@
+name: Validate Mental Model Submissions
+
+on:
+  pull_request:
+    paths:
+      - 'docs/_docs/community-models.md'
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-models:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm init -y
+        npm install js-yaml
+    
+    - name: Validate mental model changes
+      run: |
+        echo "🔍 Validating mental model submission..."
+        
+        # Check if the PR modifies the community models file
+        if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -q "docs/_docs/community-models.md"; then
+          echo "📝 Community models file has been modified"
+          
+          # Extract the new model from the diff
+          git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- docs/_docs/community-models.md > model_diff.txt
+          
+          # Basic validation checks
+          echo "✅ Checking for required elements..."
+          
+          # Check for model card structure
+          if ! grep -q '<div class="model-card">' model_diff.txt; then
+            echo "❌ No model card found in the diff"
+            exit 1
+          fi
+          
+          # Check for required fields
+          if ! grep -q '<h3>' model_diff.txt; then
+            echo "❌ Model name (h3) not found"
+            exit 1
+          fi
+          
+          if ! grep -q 'model-category' model_diff.txt; then
+            echo "❌ Model category not found"
+            exit 1
+          fi
+          
+          if ! grep -q 'model-author' model_diff.txt; then
+            echo "❌ Model author not found"
+            exit 1
+          fi
+          
+          if ! grep -q 'model-steps' model_diff.txt; then
+            echo "❌ Model steps not found"
+            exit 1
+          fi
+          
+          # Check for proper GitHub username format
+          if ! grep -q '@[a-zA-Z0-9_-]\+' model_diff.txt; then
+            echo "❌ Author should be in format @username"
+            exit 1
+          fi
+          
+          # Check for valid category
+          valid_categories="analytical|decision-making|creative|strategic|scientific|collaborative|performance|systems"
+          if ! grep -qE "($valid_categories)" model_diff.txt; then
+            echo "❌ Invalid category. Must be one of: analytical, decision-making, creative, strategic, scientific, collaborative, performance, systems"
+            exit 1
+          fi
+          
+          # Check for minimum number of steps
+          step_count=$(grep -c '<li>' model_diff.txt || echo "0")
+          if [ "$step_count" -lt 3 ]; then
+            echo "❌ Too few steps (minimum 3 required, found $step_count)"
+            exit 1
+          fi
+          
+          if [ "$step_count" -gt 10 ]; then
+            echo "❌ Too many steps (maximum 10 allowed, found $step_count)"
+            exit 1
+          fi
+          
+          echo "✅ Basic validation passed!"
+          echo "📊 Model summary:"
+          echo "  - Steps: $step_count"
+          echo "  - Category: $(grep -oE "($valid_categories)" model_diff.txt | head -1)"
+          echo "  - Author: $(grep -o '@[a-zA-Z0-9_-]\+' model_diff.txt | head -1)"
+          
+        else
+          echo "ℹ️  No changes to community models file detected"
+        fi
+    
+    - name: Check for duplicate models
+      run: |
+        echo "🔍 Checking for duplicate model names..."
+        
+        # Get the current content of the community models file
+        current_content=$(cat docs/_docs/community-models.md)
+        
+        # Extract all model names
+        model_names=$(echo "$current_content" | grep -o '<h3>[^<]*</h3>' | sed 's/<h3>//g' | sed 's/<\/h3>//g' | tr '[:upper:]' '[:lower:]')
+        
+        # Check for duplicates
+        duplicate_count=$(echo "$model_names" | sort | uniq -d | wc -l)
+        
+        if [ "$duplicate_count" -gt 0 ]; then
+          echo "❌ Duplicate model names found:"
+          echo "$model_names" | sort | uniq -d
+          exit 1
+        else
+          echo "✅ No duplicate model names found"
+        fi
+    
+    - name: Validate markdown syntax
+      run: |
+        echo "🔍 Validating markdown syntax..."
+        
+        # Check for basic markdown issues
+        if grep -q '<div class="model-card">' docs/_docs/community-models.md; then
+          echo "✅ Model cards found"
+        else
+          echo "❌ No model cards found in community models file"
+          exit 1
+        fi
+        
+        # Check for unclosed tags
+        open_divs=$(grep -o '<div' docs/_docs/community-models.md | wc -l)
+        close_divs=$(grep -o '</div>' docs/_docs/community-models.md | wc -l)
+        
+        if [ "$open_divs" -ne "$close_divs" ]; then
+          echo "❌ Unmatched div tags (open: $open_divs, close: $close_divs)"
+          exit 1
+        fi
+        
+        echo "✅ Markdown syntax validation passed"
+    
+    - name: Comment on PR
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Read the validation results
+          let comment = '## 🧠 Mental Model Validation Results\n\n';
+          
+          if ('${{ job.status }}' === 'success') {
+            comment += '✅ **Validation Passed!**\n\n';
+            comment += 'Your mental model submission has passed all validation checks:\n';
+            comment += '- ✅ Required fields present\n';
+            comment += '- ✅ Valid category\n';
+            comment += '- ✅ Proper author attribution\n';
+            comment += '- ✅ Appropriate number of steps\n';
+            comment += '- ✅ No duplicate model names\n';
+            comment += '- ✅ Valid markdown syntax\n\n';
+            comment += 'The model is ready for maintainer review! 🎉\n\n';
+            comment += '**Next steps:**\n';
+            comment += '1. Wait for maintainer review\n';
+            comment += '2. Address any feedback\n';
+            comment += '3. Get merged and see your model live! 🚀';
+          } else {
+            comment += '❌ **Validation Failed**\n\n';
+            comment += 'Please fix the following issues before your PR can be merged:\n\n';
+            comment += '**Common fixes:**\n';
+            comment += '- Ensure all required fields are present (name, category, author, steps)\n';
+            comment += '- Use a valid category: analytical, decision-making, creative, strategic, scientific, collaborative, performance, systems\n';
+            comment += '- Author should be in format @username\n';
+            comment += '- Include 3-10 actionable steps\n';
+            comment += '- Check for typos and formatting issues\n\n';
+            comment += '**Need help?** Check our [contribution guidelines](https://github.com/${{ github.repository }}/blob/main/.github/CONTRIBUTING.md) or open a discussion!';
+          }
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
