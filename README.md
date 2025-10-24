@@ -4,7 +4,7 @@ Advanced MCP server combining systematic thinking, mental models, and stochastic
 
 **Author**: W. Alec Akin ([@rainmana](https://github.com/rainmana)) | [Website](https://alecakin.com/about)
 
-> **Acknowledgments**: This project was inspired by the excellent work of the original GoThink project. We've significantly expanded and refactored it into a comprehensive MCP server with community-driven mental models and advanced thinking frameworks.
+> **Acknowledgments**: This project is based on the excellent work from the [Waldzell MCP](https://github.com/waldzellai/waldzell-mcp) repository, specifically the [clear-thought](https://github.com/waldzellai/waldzell-mcp/tree/main/servers) and [stochastic-thinking](https://github.com/waldzellai/waldzell-mcp/tree/main/servers) servers. We've significantly expanded and refactored these components into a comprehensive MCP server with community-driven mental models and advanced thinking frameworks.
 
 ## Overview
 
@@ -346,6 +346,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Based on the Model Context Protocol (MCP) by Anthropic
+- Built upon the [clear-thought](https://github.com/waldzellai/waldzell-mcp/tree/main/servers) and [stochastic-thinking](https://github.com/waldzellai/waldzell-mcp/tree/main/servers) servers from [Waldzell MCP](https://github.com/waldzellai/waldzell-mcp)
 - Inspired by classic works in decision theory and cognitive science
 - Combines insights from systematic thinking and stochastic optimization
 - Built with Go for performance and reliability
