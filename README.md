@@ -61,25 +61,44 @@ GoThink is a comprehensive Model Context Protocol (MCP) server written in Go tha
 - Go 1.21 or later
 - Git
 
+### Install from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/rainmana/gothink.git
+cd gothink
+
+# Install the MCP server
+go install .
+
+# The gothink binary will be installed to $GOPATH/bin
+```
+
 ### Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/waldzellai/gothink.git
+git clone https://github.com/rainmana/gothink.git
 cd gothink
 
 # Build the application
-go build -o gothink main.go
+go build -o gothink .
 
 # Run the server
 ./gothink
 ```
 
-### Using Go Modules
+### Using Make
 
 ```bash
-go mod tidy
-go run main.go
+# Build the application
+make build
+
+# Run in development mode
+make dev
+
+# Run the built application
+make run
 ```
 
 ## Configuration
@@ -118,124 +137,61 @@ Create a `config.json` file:
 }
 ```
 
-## API Usage
+## MCP Server Usage
 
-### Sequential Thinking
+GoThink is an MCP (Model Context Protocol) server that communicates via stdio. It provides AI assistants with powerful thinking tools through the MCP protocol.
 
-```bash
-curl -X POST http://localhost:8080/api/v1/thinking/sequential \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "thought": "Let me analyze this problem step by step",
-    "thought_number": 1,
-    "total_thoughts": 5,
-    "next_thought_needed": true
-  }'
-```
+### Available Tools
 
-### Mental Models
+The server exposes the following tools:
 
-```bash
-curl -X POST http://localhost:8080/api/v1/thinking/mental-model \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "model_name": "first_principles",
-    "problem": "How to optimize system performance?",
-    "steps": ["Break down the system", "Identify bottlenecks", "Optimize each component"],
-    "reasoning": "Starting from basic principles...",
-    "conclusion": "Focus on database queries first"
-  }'
-```
+#### Thinking Tools
+- **sequential_thinking**: Perform structured thought progression
+- **mental_model**: Apply mental models to solve problems
+- **debugging_approach**: Apply systematic debugging approaches
+- **list_mental_models**: List all available mental models
 
-### Stochastic Algorithms
+#### Stochastic Algorithms
+- **markov_decision_process**: Run MDP optimization for sequential decisions
+- **monte_carlo_tree_search**: Run MCTS for game tree exploration
+- **multi_armed_bandit**: Run bandit algorithms for exploration vs exploitation
 
-#### Markov Decision Process
+#### Decision Frameworks
+- **decision_framework**: Apply decision frameworks for structured decision making
 
-```bash
-curl -X POST http://localhost:8080/api/v1/stochastic/mdp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "problem": "Optimize robot navigation policy",
-    "states": 100,
-    "actions": ["up", "down", "left", "right"],
-    "gamma": 0.9,
-    "learning_rate": 0.1,
-    "epsilon": 0.1,
-    "max_iterations": 1000
-  }'
-```
+#### Visualization Tools
+- **concept_map**: Create and manipulate concept maps for visual thinking
 
-#### Monte Carlo Tree Search
+#### Session Management
+- **session_stats**: Get statistics for a session
+- **session_export**: Export all data for a session
+
+#### Intelligence Tools
+- **query_attack**: Query MITRE ATT&CK techniques and tactics
+- **query_nvd**: Query NVD CVE data for security vulnerabilities
+- **query_owasp**: Query OWASP testing procedures and guidelines
+- **refresh_intelligence**: Refresh all intelligence data from external sources
+- **intelligence_stats**: Get statistics about available intelligence data
+
+### Testing the MCP Server
+
+You can test the server using JSON-RPC messages:
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/stochastic/mcts \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "problem": "Find optimal game strategy",
-    "simulations": 1000,
-    "exploration_constant": 1.4,
-    "max_depth": 10
-  }'
+# Initialize the server
+echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {"tools": {}}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}}' | gothink
+
+# List available tools
+echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' | gothink
 ```
 
-#### Multi-Armed Bandit
+### Integration with MCP Clients
 
-```bash
-curl -X POST http://localhost:8080/api/v1/stochastic/bandit \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "problem": "Optimize ad placement",
-    "arms": 5,
-    "strategy": "epsilon-greedy",
-    "epsilon": 0.1
-  }'
-```
+The server is designed to work with MCP-compatible clients like Claude Desktop. To integrate:
 
-### Decision Frameworks
-
-```bash
-curl -X POST http://localhost:8080/api/v1/decision/framework \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "decision_statement": "Choose the best technology stack",
-    "options": [
-      {"name": "React + Node.js", "description": "Full-stack JavaScript"},
-      {"name": "Vue + Python", "description": "Python backend with Vue frontend"},
-      {"name": "Angular + Java", "description": "Enterprise-grade solution"}
-    ],
-    "criteria": [
-      {"name": "Development Speed", "weight": 0.4, "evaluation_method": "quantitative"},
-      {"name": "Maintainability", "weight": 0.3, "evaluation_method": "qualitative"},
-      {"name": "Performance", "weight": 0.3, "evaluation_method": "quantitative"}
-    ],
-    "analysis_type": "multi-criteria"
-  }'
-```
-
-### Visualization
-
-```bash
-curl -X POST http://localhost:8080/api/v1/visual/concept-map \
-  -H "Content-Type: application/json" \
-  -d '{
-    "session_id": "session-123",
-    "diagram_id": "concept-map-1",
-    "operation": "create",
-    "elements": [
-      {"id": "node-1", "type": "node", "label": "Problem", "properties": {"color": "red"}},
-      {"id": "node-2", "type": "node", "label": "Solution", "properties": {"color": "green"}},
-      {"id": "edge-1", "type": "edge", "source": "node-1", "target": "node-2", "label": "leads to"}
-    ],
-    "iteration": 1,
-    "next_operation_needed": false
-  }'
-```
+1. Install the server using `go install .`
+2. Configure your MCP client to use the `gothink` binary
+3. The server will communicate via stdio as required by the MCP protocol
 
 ## Mental Models
 
@@ -290,15 +246,17 @@ Prefer simpler explanations when multiple explanations are available.
 
 ```
 gothink/
-├── main.go                 # Application entry point
+├── main.go                 # MCP server entry point
 ├── go.mod                  # Go module definition
 ├── internal/
 │   ├── config/            # Configuration management
-│   ├── handlers/          # HTTP request handlers
-│   ├── middleware/        # HTTP middleware
-│   ├── server/            # Server implementation
+│   ├── handlers/          # MCP tool handlers
+│   ├── models/            # Mental models loader
 │   ├── storage/           # Data storage layer
-│   └── types/             # Type definitions
+│   ├── types/             # Type definitions
+│   └── intelligence/      # Intelligence data services
+├── examples/              # Example mental models
+├── docs/                  # Documentation
 └── README.md              # This file
 ```
 
@@ -312,13 +270,18 @@ go test ./...
 
 ```bash
 # Build for Linux
-GOOS=linux GOARCH=amd64 go build -o gothink-linux main.go
+GOOS=linux GOARCH=amd64 go build -o gothink-linux .
 
 # Build for Windows
-GOOS=windows GOARCH=amd64 go build -o gothink.exe main.go
+GOOS=windows GOARCH=amd64 go build -o gothink.exe .
 
 # Build for macOS
-GOOS=darwin GOARCH=amd64 go build -o gothink-macos main.go
+GOOS=darwin GOARCH=amd64 go build -o gothink-macos .
+
+# Or use the Makefile
+make build-linux
+make build-windows
+make build-macos
 ```
 
 ### Docker Support
