@@ -79,9 +79,22 @@ validate_response() {
         return 1
     fi
     
-    # Check expected fields
+    # Check for content array
+    if ! echo "$response" | jq -e '.result.content' >/dev/null 2>&1; then
+        print_test_result "$test_name" "FAIL" "No content field in MCP response"
+        return 1
+    fi
+    
+    # Extract the actual JSON from content[0].text
+    local actual_json=$(echo "$response" | jq -r '.result.content[0].text')
+    if [ "$actual_json" = "null" ] || [ -z "$actual_json" ]; then
+        print_test_result "$test_name" "FAIL" "No text content in MCP response"
+        return 1
+    fi
+    
+    # Check expected fields in the actual JSON
     for field in $expected_fields; do
-        if ! echo "$response" | jq -e ".result.$field" >/dev/null 2>&1; then
+        if ! echo "$actual_json" | jq -e ".$field" >/dev/null 2>&1; then
             print_test_result "$test_name" "FAIL" "Missing required field: $field"
             return 1
         fi
@@ -96,8 +109,11 @@ validate_data_content() {
     local test_name="$2"
     local data_type="$3"
     
+    # Extract the actual JSON from content[0].text
+    local actual_json=$(echo "$response" | jq -r '.result.content[0].text')
+    
     # Check if results array exists and has content
-    local result_count=$(echo "$response" | jq '.result.results | length')
+    local result_count=$(echo "$actual_json" | jq '.results | length')
     if [ "$result_count" -eq 0 ]; then
         print_test_result "$test_name" "FAIL" "No results returned"
         return 1
@@ -107,7 +123,7 @@ validate_data_content() {
     case "$data_type" in
         "nvd")
             # Check for CVE-specific fields
-            local cve_id=$(echo "$response" | jq -r '.result.results[0].id')
+            local cve_id=$(echo "$actual_json" | jq -r '.results[0].id')
             if [ "$cve_id" = "null" ] || [ -z "$cve_id" ]; then
                 print_test_result "$test_name" "FAIL" "CVE ID not found in results"
                 return 1
@@ -121,7 +137,7 @@ validate_data_content() {
             ;;
         "attack")
             # Check for ATT&CK-specific fields
-            local technique_id=$(echo "$response" | jq -r '.result.results[0].id')
+            local technique_id=$(echo "$actual_json" | jq -r '.results[0].id')
             if [ "$technique_id" = "null" ] || [ -z "$technique_id" ]; then
                 print_test_result "$test_name" "FAIL" "Technique ID not found in results"
                 return 1
@@ -135,7 +151,7 @@ validate_data_content() {
             ;;
         "owasp")
             # Check for OWASP-specific fields
-            local procedure_id=$(echo "$response" | jq -r '.result.results[0].id')
+            local procedure_id=$(echo "$actual_json" | jq -r '.results[0].id')
             if [ "$procedure_id" = "null" ] || [ -z "$procedure_id" ]; then
                 print_test_result "$test_name" "FAIL" "Procedure ID not found in results"
                 return 1
@@ -158,15 +174,18 @@ validate_real_data_sources() {
     local test_name="$2"
     local expected_source="$3"
     
+    # Extract the actual JSON from content[0].text
+    local actual_json=$(echo "$response" | jq -r '.result.content[0].text')
+    
     # Check source field
-    local source=$(echo "$response" | jq -r '.result.source')
+    local source=$(echo "$actual_json" | jq -r '.source')
     if [ "$source" != "$expected_source" ]; then
         print_test_result "$test_name" "FAIL" "Expected source '$expected_source', got '$source'"
         return 1
     fi
     
     # Check timestamp is recent (within last hour)
-    local timestamp=$(echo "$response" | jq -r '.result.timestamp')
+    local timestamp=$(echo "$actual_json" | jq -r '.timestamp')
     local current_time=$(date -u +%s)
     local response_time=$(date -u -d "$timestamp" +%s 2>/dev/null || echo "0")
     local time_diff=$((current_time - response_time))
@@ -205,7 +224,7 @@ echo ""
 
 # Test 1: Server connectivity
 echo -e "${YELLOW}Test 1: Server Connectivity${NC}"
-response=$(curl -s -o /dev/null -w "%{http_code}" "$SERVER_URL" --max-time 5)
+response=$(curl -s -o /dev/null -w "%{http_code}" "$SERVER_URL/health" --max-time 5)
 if [ "$response" = "200" ]; then
     print_test_result "Server Connectivity" "PASS" "Server is responding"
 else

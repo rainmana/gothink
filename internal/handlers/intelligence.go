@@ -24,6 +24,11 @@ func NewIntelligenceHandler(apiKey string) *IntelligenceHandler {
 	}
 }
 
+// SetIntelligenceService sets the intelligence service instance
+func (h *IntelligenceHandler) SetIntelligenceService(service *intelligence.IntelligenceService) {
+	h.intelligenceService = service
+}
+
 // AddIntelligenceTools adds intelligence tools to the MCP server
 func (h *IntelligenceHandler) AddIntelligenceTools(s *server.MCPServer) {
 	// Query NVD CVE data
@@ -208,4 +213,29 @@ func (h *IntelligenceHandler) AddIntelligenceTools(s *server.MCPServer) {
 			return mcp.NewToolResultText(string(resultJSON)), nil
 		},
 	)
+}
+
+// QueryNVDData queries NVD CVE data
+func (h *IntelligenceHandler) QueryNVDData(ctx context.Context, query models.IntelligenceQuery) (*models.IntelligenceResponse, error) {
+	return h.intelligenceService.QueryNVDData(ctx, query)
+}
+
+// QueryMITREData queries MITRE ATT&CK data
+func (h *IntelligenceHandler) QueryMITREData(ctx context.Context, query models.IntelligenceQuery) (*models.IntelligenceResponse, error) {
+	return h.intelligenceService.QueryMITREData(ctx, query)
+}
+
+// QueryOWASPData queries OWASP data
+func (h *IntelligenceHandler) QueryOWASPData(ctx context.Context, query models.IntelligenceQuery) (*models.IntelligenceResponse, error) {
+	return h.intelligenceService.QueryOWASPData(ctx, query)
+}
+
+// RefreshIntelligenceData refreshes all intelligence data
+func (h *IntelligenceHandler) RefreshIntelligenceData(ctx context.Context) error {
+	return h.intelligenceService.RefreshIntelligenceData(ctx)
+}
+
+// GetIntelligenceStats returns statistics about the intelligence data
+func (h *IntelligenceHandler) GetIntelligenceStats(ctx context.Context) map[string]interface{} {
+	return h.intelligenceService.GetIntelligenceStats(ctx)
 }

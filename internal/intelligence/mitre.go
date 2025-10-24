@@ -92,9 +92,12 @@ func (m *MITREDownloader) DownloadTechniques(ctx context.Context) ([]models.Atta
 
 	// Convert MITRE response to our AttackTechnique models
 	var techniques []models.AttackTechnique
+	fmt.Printf("Processing %d objects from MITRE...\n", len(mitreResp.Objects))
+	attackPatternCount := 0
 	for _, obj := range mitreResp.Objects {
 		// Only process attack-pattern objects (techniques)
 		if obj.Type == "attack-pattern" {
+			attackPatternCount++
 			technique := models.AttackTechnique{
 				ID:          obj.ID,
 				Name:        obj.Name,
@@ -122,7 +125,8 @@ func (m *MITREDownloader) DownloadTechniques(ctx context.Context) ([]models.Atta
 			techniques = append(techniques, technique)
 		}
 	}
-
+	
+	fmt.Printf("Found %d attack-pattern objects, created %d techniques\n", attackPatternCount, len(techniques))
 	return techniques, nil
 }
 

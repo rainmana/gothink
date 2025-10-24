@@ -53,6 +53,7 @@ type IntelligenceQuery struct {
 
 // IntelligenceResponse represents the response from an intelligence query
 type IntelligenceResponse struct {
+	Status    string        `json:"status"`
 	Results   []interface{} `json:"results"`
 	Total     int           `json:"total"`
 	Limit     int           `json:"limit"`

@@ -116,6 +116,9 @@ func (n *NVDDownloader) DownloadCVEs(ctx context.Context, startIndex int, result
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusTooManyRequests {
+		return nil, fmt.Errorf("NVD API rate limit exceeded (429) - too many requests")
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("NVD API returned status %d", resp.StatusCode)
 	}
@@ -220,8 +223,9 @@ func (n *NVDDownloader) DownloadAllCVEs(ctx context.Context) ([]models.CVE, erro
 		allCVEs = append(allCVEs, cves...)
 		startIndex += len(cves)
 
-		// Rate limiting - NVD API has rate limits
-		time.Sleep(1 * time.Second)
+		// Rate limiting - NVD API allows 5 requests per 30 seconds without API key
+		// Use 7 seconds to be safe
+		time.Sleep(7 * time.Second)
 	}
 
 	return allCVEs, nil
