@@ -6,7 +6,7 @@ toolchain go1.24.0
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/mark3labs/mcp-go v0.43.0-beta.1
+	github.com/mark3labs/mcp-go v0.42.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1

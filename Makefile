@@ -24,7 +24,7 @@ all: test build
 
 # Build the application
 build:
-	$(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_NAME) -v ./...
+	$(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_NAME) -v .
 
 # Build for different platforms
 build-linux:
