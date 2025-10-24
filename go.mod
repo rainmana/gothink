@@ -9,6 +9,7 @@ require (
 	github.com/mark3labs/mcp-go v0.43.0-beta.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -23,5 +24,4 @@ require (
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

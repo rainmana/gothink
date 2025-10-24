@@ -10,11 +10,12 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/sirupsen/logrus"
 	"github.com/rainmana/gothink/internal/config"
+	"github.com/rainmana/gothink/internal/handlers"
 	"github.com/rainmana/gothink/internal/models"
 	"github.com/rainmana/gothink/internal/storage"
 	"github.com/rainmana/gothink/internal/types"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -50,6 +51,9 @@ func main() {
 	addDecisionTools(s, store)
 	addVisualTools(s, store)
 	addSessionTools(s, store)
+
+	// Add intelligence tools
+	addIntelligenceTools(s, cfg)
 
 	// Start the stdio server
 	if err := server.ServeStdio(s); err != nil {
@@ -624,4 +628,12 @@ func getProperties(properties interface{}) map[string]interface{} {
 		return props
 	}
 	return nil
+}
+
+func addIntelligenceTools(s *server.MCPServer, cfg *config.Config) {
+	// Create intelligence handler
+	intelligenceHandler := handlers.NewIntelligenceHandler("") // No API key for now
+
+	// Add intelligence tools
+	intelligenceHandler.AddIntelligenceTools(s)
 }

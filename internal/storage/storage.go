@@ -46,6 +46,7 @@ type SessionData struct {
 
 // New creates a new storage instance
 func New(cfg *config.Config) (*Storage, error) {
+
 	return &Storage{
 		config:               cfg,
 		logger:               logrus.New(),
