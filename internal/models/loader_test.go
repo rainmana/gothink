@@ -447,3 +447,50 @@ models:
 	require.True(t, exists)
 	assert.Equal(t, 1, model.Priority) // Should get default priority of 1
 }
+
+func TestLoadMentalModels_WithDirectory(t *testing.T) {
+	logger := logrus.New()
+	loader := NewLoader(logger)
+
+	// Create a temporary directory
+	tmpDir := t.TempDir()
+
+	// Create first YAML file
+	yamlContent1 := `
+models:
+  model_1:
+    name: "Model 1"
+    description: "Description 1"
+    steps: ["Step 1"]
+    category: "cat1"
+`
+	err := os.WriteFile(filepath.Join(tmpDir, "models1.yaml"), []byte(yamlContent1), 0644)
+	require.NoError(t, err)
+
+	// Create second YAML file
+	yamlContent2 := `
+models:
+  model_2:
+    name: "Model 2"
+    description: "Description 2"
+    steps: ["Step 1"]
+    category: "cat2"
+`
+	err = os.WriteFile(filepath.Join(tmpDir, "models2.yaml"), []byte(yamlContent2), 0644)
+	require.NoError(t, err)
+
+	// Create a non-YAML file (should be ignored)
+	err = os.WriteFile(filepath.Join(tmpDir, "readme.txt"), []byte("ignore me"), 0644)
+	require.NoError(t, err)
+
+	// Load models from directory
+	models, err := loader.LoadMentalModels(tmpDir)
+
+	require.NoError(t, err)
+	assert.NotEmpty(t, models)
+
+	// Check that models from both files are loaded
+	assert.Contains(t, models, "model_1")
+	assert.Contains(t, models, "model_2")
+	assert.Contains(t, models, "first_principles") // Core models should still be there
+}

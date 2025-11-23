@@ -44,7 +44,7 @@ config.json
 # Build artifacts
 dist/
 build/
-gothink
+/gothink
 gothink.exe
 gothink-linux
 gothink-macos

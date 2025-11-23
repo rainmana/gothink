@@ -14,7 +14,7 @@ description: "GoThink is a powerful MCP server that provides advanced thinking f
                 </h1>
                 <p class="hero-description">
                     GoThink is a powerful MCP server that provides advanced thinking frameworks, 
-                    mental models, and decision-making tools. Built with Go for performance and 
+                    mental models, and structured reasoning tools. Built with Go for performance and 
                     extensibility with custom mental models via YAML configuration.
                 </p>
                 <div class="hero-actions">
@@ -71,21 +71,7 @@ description: "GoThink is a powerful MCP server that provides advanced thinking f
                     <h3>Mental Models</h3>
                     <p>Built-in and custom mental models with priority-based selection and YAML configuration.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Decision Frameworks</h3>
-                    <p>Advanced decision-making tools including multi-criteria analysis and risk assessment.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Stochastic Algorithms</h3>
-                    <p>MDP, MCTS, Multi-Armed Bandit, Bayesian Optimization, and HMM implementations.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Visual Thinking</h3>
-                    <p>Concept maps, mind maps, flowcharts, and decision trees for visual problem solving.</p>
-                </div>
+
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
                     <h3>High Performance</h3>
@@ -178,7 +164,7 @@ description: "GoThink is a powerful MCP server that provides advanced thinking f
                 <div class="install-method">
                     <h3>Go Install</h3>
                     <div class="code-block">
-                        <pre><code class="language-bash">go install github.com/rainmana/gothink@latest</code></pre>
+                        <pre><code class="language-bash">go install github.com/rainmana/gothink/cmd/gothink@latest</code></pre>
                     </div>
                 </div>
                 <div class="install-method">
@@ -186,7 +172,7 @@ description: "GoThink is a powerful MCP server that provides advanced thinking f
                     <div class="code-block">
                         <pre><code class="language-bash">git clone https://github.com/rainmana/gothink.git
 cd gothink
-go build -o gothink-mcp mcp_main.go</code></pre>
+go build -o gothink ./cmd/gothink</code></pre>
                     </div>
                 </div>
                 <div class="install-method">
@@ -214,7 +200,7 @@ docker run -it gothink</code></pre>
                             <pre><code class="language-json">{
   "mcpServers": {
     "gothink": {
-      "command": "gothink-mcp",
+      "command": "gothink",
       "args": []
     }
   }
@@ -295,20 +281,7 @@ docker run -it gothink</code></pre>
                         </ul>
                     </div>
                 </div>
-                <div class="tool-card">
-                    <h3>decision_framework</h3>
-                    <p>Apply decision frameworks for structured decision making.</p>
-                    <div class="tool-params">
-                        <h4>Parameters:</h4>
-                        <ul>
-                            <li><code>session_id</code> (required) - Session identifier</li>
-                            <li><code>decision_statement</code> (required) - Statement of the decision to be made</li>
-                            <li><code>options</code> (optional) - Available decision options</li>
-                            <li><code>criteria</code> (optional) - Decision criteria and weights</li>
-                            <li><code>analysis_type</code> (optional) - Type of analysis to perform</li>
-                        </ul>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
@@ -353,31 +326,7 @@ models:
     priority: 8</code></pre>
                     </div>
                 </div>
-                <div class="example-card">
-                    <h3>Decision Framework</h3>
-                    <div class="code-block">
-                        <pre><code class="language-json">{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/call",
-  "params": {
-    "name": "decision_framework",
-    "arguments": {
-      "session_id": "decision-session",
-      "decision_statement": "Choose between two job offers",
-      "options": [
-        {"id": "offer1", "name": "Startup A", "description": "High growth potential"},
-        {"id": "offer2", "name": "Corp B", "description": "Stable salary"}
-      ],
-      "criteria": [
-        {"id": "salary", "name": "Salary", "weight": 0.4},
-        {"id": "growth", "name": "Growth Potential", "weight": 0.6}
-      ]
-    }
-  }
-}</code></pre>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>

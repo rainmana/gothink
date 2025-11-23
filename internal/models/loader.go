@@ -3,11 +3,12 @@ package models
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/rainmana/gothink/internal/types"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -79,13 +80,50 @@ func (l *Loader) LoadMentalModels(configPath string) (map[string]MentalModel, er
 	return models, nil
 }
 
-// loadCustomModels loads mental models from a YAML file
-func (l *Loader) loadCustomModels(filePath string) (map[string]MentalModel, error) {
-	// Check if file exists
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("mental models file does not exist: %s", filePath)
+// loadCustomModels loads mental models from a YAML file or directory
+func (l *Loader) loadCustomModels(path string) (map[string]MentalModel, error) {
+	// Check if path exists
+	info, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return nil, fmt.Errorf("mental models path does not exist: %s", path)
 	}
 
+	models := make(map[string]MentalModel)
+
+	if info.IsDir() {
+		// Walk directory
+		err := filepath.WalkDir(path, func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if !d.IsDir() && (strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")) {
+				fileModels, err := l.loadModelsFromFile(path)
+				if err != nil {
+					l.logger.Warnf("Failed to load models from %s: %v", path, err)
+					return nil // Continue loading other files
+				}
+				for k, v := range fileModels {
+					models[k] = v
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to walk directory: %w", err)
+		}
+	} else {
+		// Load single file
+		models, err = l.loadModelsFromFile(path)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return models, nil
+}
+
+// loadModelsFromFile loads mental models from a single YAML file
+func (l *Loader) loadModelsFromFile(filePath string) (map[string]MentalModel, error) {
 	// Read file
 	data, err := os.ReadFile(filePath)
 	if err != nil {

@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/rainmana/gothink/internal/config"
 	"github.com/rainmana/gothink/internal/types"
+	"github.com/sirupsen/logrus"
 )
 
 // Storage manages all data storage for the GoThink server
@@ -16,20 +16,14 @@ type Storage struct {
 	logger *logrus.Logger
 
 	// In-memory stores (in production, these would be backed by a database)
-	thoughts             map[string]*types.ThoughtData
-	mentalModels         map[string]*types.MentalModelData
-	stochasticAlgorithms map[string]*types.StochasticAlgorithmData
-	decisions            map[string]*types.DecisionData
-	visualData           map[string]*types.VisualData
-	sessions             map[string]*SessionData
+	thoughts     map[string]*types.ThoughtData
+	mentalModels map[string]*types.MentalModelData
+	sessions     map[string]*SessionData
 
 	// Mutexes for thread safety
-	thoughtsMutex             sync.RWMutex
-	mentalModelsMutex         sync.RWMutex
-	stochasticAlgorithmsMutex sync.RWMutex
-	decisionsMutex            sync.RWMutex
-	visualDataMutex           sync.RWMutex
-	sessionsMutex             sync.RWMutex
+	thoughtsMutex     sync.RWMutex
+	mentalModelsMutex sync.RWMutex
+	sessionsMutex     sync.RWMutex
 }
 
 // SessionData represents session-specific data
@@ -48,14 +42,11 @@ type SessionData struct {
 func New(cfg *config.Config) (*Storage, error) {
 
 	return &Storage{
-		config:               cfg,
-		logger:               logrus.New(),
-		thoughts:             make(map[string]*types.ThoughtData),
-		mentalModels:         make(map[string]*types.MentalModelData),
-		stochasticAlgorithms: make(map[string]*types.StochasticAlgorithmData),
-		decisions:            make(map[string]*types.DecisionData),
-		visualData:           make(map[string]*types.VisualData),
-		sessions:             make(map[string]*SessionData),
+		config:       cfg,
+		logger:       logrus.New(),
+		thoughts:     make(map[string]*types.ThoughtData),
+		mentalModels: make(map[string]*types.MentalModelData),
+		sessions:     make(map[string]*SessionData),
 	}, nil
 }
 
@@ -154,135 +145,6 @@ func (s *Storage) GetMentalModels(sessionID string) ([]*types.MentalModelData, e
 }
 
 // ============================================================================
-// Stochastic Algorithm Management
-// ============================================================================
-
-// AddStochasticAlgorithm adds a stochastic algorithm result to storage
-func (s *Storage) AddStochasticAlgorithm(sessionID string, algorithm *types.StochasticAlgorithmData) error {
-	s.stochasticAlgorithmsMutex.Lock()
-	defer s.stochasticAlgorithmsMutex.Unlock()
-
-	if algorithm.ID == "" {
-		algorithm.ID = generateID()
-	}
-	algorithm.CreatedAt = time.Now()
-
-	s.stochasticAlgorithms[algorithm.ID] = algorithm
-
-	// Update session
-	session := s.getSession(sessionID)
-	session.LastAccessedAt = time.Now()
-	s.sessions[sessionID] = session
-
-	s.logger.WithFields(logrus.Fields{
-		"session_id":   sessionID,
-		"algorithm_id": algorithm.ID,
-		"algorithm":    algorithm.Algorithm,
-	}).Debug("Added stochastic algorithm to storage")
-
-	return nil
-}
-
-// GetStochasticAlgorithms retrieves all stochastic algorithms for a session
-func (s *Storage) GetStochasticAlgorithms(sessionID string) ([]*types.StochasticAlgorithmData, error) {
-	s.stochasticAlgorithmsMutex.RLock()
-	defer s.stochasticAlgorithmsMutex.RUnlock()
-
-	var sessionAlgorithms []*types.StochasticAlgorithmData
-	for _, algorithm := range s.stochasticAlgorithms {
-		sessionAlgorithms = append(sessionAlgorithms, algorithm)
-	}
-
-	return sessionAlgorithms, nil
-}
-
-// ============================================================================
-// Decision Management
-// ============================================================================
-
-// AddDecision adds a decision framework to storage
-func (s *Storage) AddDecision(sessionID string, decision *types.DecisionData) error {
-	s.decisionsMutex.Lock()
-	defer s.decisionsMutex.Unlock()
-
-	if decision.ID == "" {
-		decision.ID = generateID()
-	}
-	decision.CreatedAt = time.Now()
-
-	s.decisions[decision.ID] = decision
-
-	// Update session
-	session := s.getSession(sessionID)
-	session.LastAccessedAt = time.Now()
-	s.sessions[sessionID] = session
-
-	s.logger.WithFields(logrus.Fields{
-		"session_id":    sessionID,
-		"decision_id":   decision.ID,
-		"analysis_type": decision.AnalysisType,
-	}).Debug("Added decision to storage")
-
-	return nil
-}
-
-// GetDecisions retrieves all decisions for a session
-func (s *Storage) GetDecisions(sessionID string) ([]*types.DecisionData, error) {
-	s.decisionsMutex.RLock()
-	defer s.decisionsMutex.RUnlock()
-
-	var sessionDecisions []*types.DecisionData
-	for _, decision := range s.decisions {
-		sessionDecisions = append(sessionDecisions, decision)
-	}
-
-	return sessionDecisions, nil
-}
-
-// ============================================================================
-// Visual Data Management
-// ============================================================================
-
-// AddVisualData adds visual data to storage
-func (s *Storage) AddVisualData(sessionID string, visual *types.VisualData) error {
-	s.visualDataMutex.Lock()
-	defer s.visualDataMutex.Unlock()
-
-	if visual.ID == "" {
-		visual.ID = generateID()
-	}
-	visual.CreatedAt = time.Now()
-
-	s.visualData[visual.ID] = visual
-
-	// Update session
-	session := s.getSession(sessionID)
-	session.LastAccessedAt = time.Now()
-	s.sessions[sessionID] = session
-
-	s.logger.WithFields(logrus.Fields{
-		"session_id":   sessionID,
-		"visual_id":    visual.ID,
-		"diagram_type": visual.DiagramType,
-	}).Debug("Added visual data to storage")
-
-	return nil
-}
-
-// GetVisualData retrieves all visual data for a session
-func (s *Storage) GetVisualData(sessionID string) ([]*types.VisualData, error) {
-	s.visualDataMutex.RLock()
-	defer s.visualDataMutex.RUnlock()
-
-	var sessionVisuals []*types.VisualData
-	for _, visual := range s.visualData {
-		sessionVisuals = append(sessionVisuals, visual)
-	}
-
-	return sessionVisuals, nil
-}
-
-// ============================================================================
 // Session Management
 // ============================================================================
 
@@ -351,9 +213,6 @@ func (s *Storage) GetSessionStats(sessionID string) (*types.SessionStatistics, e
 
 	thoughts, _ := s.GetThoughts(sessionID)
 	mentalModels, _ := s.GetMentalModels(sessionID)
-	stochasticAlgorithms, _ := s.GetStochasticAlgorithms(sessionID)
-	decisions, _ := s.GetDecisions(sessionID)
-	visualData, _ := s.GetVisualData(sessionID)
 
 	// Collect tools used
 	toolsUsed := make(map[string]bool)
@@ -362,15 +221,6 @@ func (s *Storage) GetSessionStats(sessionID string) (*types.SessionStatistics, e
 	}
 	if len(mentalModels) > 0 {
 		toolsUsed["mental-model"] = true
-	}
-	for _, algorithm := range stochasticAlgorithms {
-		toolsUsed["stochastic-"+algorithm.Algorithm] = true
-	}
-	if len(decisions) > 0 {
-		toolsUsed["decision-framework"] = true
-	}
-	for _, visual := range visualData {
-		toolsUsed["visual-"+visual.DiagramType] = true
 	}
 
 	var toolsList []string
@@ -384,15 +234,12 @@ func (s *Storage) GetSessionStats(sessionID string) (*types.SessionStatistics, e
 		LastAccessedAt:    session.LastAccessedAt,
 		ThoughtCount:      len(thoughts),
 		ToolsUsed:         toolsList,
-		TotalOperations:   len(thoughts) + len(mentalModels) + len(stochasticAlgorithms) + len(decisions) + len(visualData),
+		TotalOperations:   len(thoughts) + len(mentalModels),
 		IsActive:          session.IsActive,
 		RemainingThoughts: s.config.MaxThoughtsPerSession - len(thoughts),
 		Stores: map[string]interface{}{
-			"thoughts":              map[string]int{"count": len(thoughts)},
-			"mental_models":         map[string]int{"count": len(mentalModels)},
-			"stochastic_algorithms": map[string]int{"count": len(stochasticAlgorithms)},
-			"decisions":             map[string]int{"count": len(decisions)},
-			"visual_data":           map[string]int{"count": len(visualData)},
+			"thoughts":      map[string]int{"count": len(thoughts)},
+			"mental_models": map[string]int{"count": len(mentalModels)},
 		},
 	}
 
@@ -407,9 +254,6 @@ func (s *Storage) GetSessionStats(sessionID string) (*types.SessionStatistics, e
 func (s *Storage) ExportSession(sessionID string) (*types.SessionExport, error) {
 	thoughts, _ := s.GetThoughts(sessionID)
 	mentalModels, _ := s.GetMentalModels(sessionID)
-	stochasticAlgorithms, _ := s.GetStochasticAlgorithms(sessionID)
-	decisions, _ := s.GetDecisions(sessionID)
-	visualData, _ := s.GetVisualData(sessionID)
 
 	export := &types.SessionExport{
 		Version:     "1.0.0",
@@ -417,11 +261,8 @@ func (s *Storage) ExportSession(sessionID string) (*types.SessionExport, error) 
 		SessionID:   sessionID,
 		SessionType: "hybrid",
 		Data: map[string]interface{}{
-			"thoughts":              thoughts,
-			"mental_models":         mentalModels,
-			"stochastic_algorithms": stochasticAlgorithms,
-			"decisions":             decisions,
-			"visual_data":           visualData,
+			"thoughts":      thoughts,
+			"mental_models": mentalModels,
 		},
 		Metadata: map[string]interface{}{
 			"exported_at": time.Now(),

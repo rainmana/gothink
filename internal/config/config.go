@@ -19,16 +19,6 @@ type Config struct {
 	SessionTimeout        time.Duration `json:"session_timeout" yaml:"session_timeout"`
 	MaxThoughtsPerSession int           `json:"max_thoughts_per_session" yaml:"max_thoughts_per_session"`
 
-	// Feature flags
-	EnableStochasticAlgorithms bool `json:"enable_stochastic_algorithms" yaml:"enable_stochastic_algorithms"`
-	EnableSystematicThinking   bool `json:"enable_systematic_thinking" yaml:"enable_systematic_thinking"`
-	EnableVisualization        bool `json:"enable_visualization" yaml:"enable_visualization"`
-	EnableHybridThinking       bool `json:"enable_hybrid_thinking" yaml:"enable_hybrid_thinking"`
-
-	// Algorithm settings
-	MaxStochasticIterations    int     `json:"max_stochastic_iterations" yaml:"max_stochastic_iterations"`
-	DefaultConfidenceThreshold float64 `json:"default_confidence_threshold" yaml:"default_confidence_threshold"`
-
 	// Persistence settings
 	EnablePersistence bool   `json:"enable_persistence" yaml:"enable_persistence"`
 	PersistencePath   string `json:"persistence_path" yaml:"persistence_path"`
@@ -47,22 +37,17 @@ type Config struct {
 // DefaultConfig returns the default configuration
 func DefaultConfig() *Config {
 	return &Config{
-		Port:                       "8080",
-		Host:                       "localhost",
-		ReadTimeout:                30 * time.Second,
-		WriteTimeout:               30 * time.Second,
-		SessionTimeout:             30 * time.Minute,
-		MaxThoughtsPerSession:      100,
-		EnableStochasticAlgorithms: true,
-		EnableSystematicThinking:   true,
-		EnableVisualization:        true,
-		EnableHybridThinking:       true,
-		MaxStochasticIterations:    1000,
-		DefaultConfidenceThreshold: 0.8,
-		EnablePersistence:          false,
-		EnableDetailedLogging:      false,
-		LogLevel:                   "info",
-		AlgorithmDefaults:          make(map[string]interface{}),
+		Port:                  "8080",
+		Host:                  "localhost",
+		ReadTimeout:           30 * time.Second,
+		WriteTimeout:          30 * time.Second,
+		SessionTimeout:        30 * time.Minute,
+		MaxThoughtsPerSession: 100,
+
+		EnablePersistence:     false,
+		EnableDetailedLogging: false,
+		LogLevel:              "info",
+		AlgorithmDefaults:     make(map[string]interface{}),
 	}
 }
 
@@ -101,18 +86,7 @@ func loadFromEnv(cfg *Config) {
 	if host := os.Getenv("GOTHINK_HOST"); host != "" {
 		cfg.Host = host
 	}
-	if enableStochastic := os.Getenv("GOTHINK_ENABLE_STOCHASTIC"); enableStochastic == "false" {
-		cfg.EnableStochasticAlgorithms = false
-	}
-	if enableSystematic := os.Getenv("GOTHINK_ENABLE_SYSTEMATIC"); enableSystematic == "false" {
-		cfg.EnableSystematicThinking = false
-	}
-	if enableVisualization := os.Getenv("GOTHINK_ENABLE_VISUALIZATION"); enableVisualization == "false" {
-		cfg.EnableVisualization = false
-	}
-	if enableHybrid := os.Getenv("GOTHINK_ENABLE_HYBRID"); enableHybrid == "false" {
-		cfg.EnableHybridThinking = false
-	}
+
 	if logLevel := os.Getenv("GOTHINK_LOG_LEVEL"); logLevel != "" {
 		cfg.LogLevel = logLevel
 	}

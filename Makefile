@@ -24,17 +24,17 @@ all: test build
 
 # Build the application
 build:
-	$(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_NAME) -v .
+	$(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_NAME) -v ./cmd/gothink
 
 # Build for different platforms
 build-linux:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_UNIX) -v ./...
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_UNIX) -v ./cmd/gothink
 
 build-windows:
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_WINDOWS) -v ./...
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_WINDOWS) -v ./cmd/gothink
 
 build-macos:
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_MACOS) -v ./...
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) $(BUILD_FLAGS) -o $(BINARY_MACOS) -v ./cmd/gothink
 
 # Build all platforms
 build-all: build-linux build-windows build-macos
@@ -63,12 +63,12 @@ deps:
 
 # Run the application
 run:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./...
+	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd/gothink
 	./$(BINARY_NAME)
 
 # Run in development mode
 dev:
-	$(GOCMD) run main.go
+	$(GOCMD) run cmd/gothink/main.go
 
 # Format code
 fmt:

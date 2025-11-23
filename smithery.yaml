@@ -17,20 +17,11 @@ startCommand:
         type: number
         default: 100
         description: "Maximum thoughts per session (default: 100)"
-      enableStochasticAlgorithms:
-        type: boolean
-        default: true
-        description: "Enable stochastic algorithm tools"
-      enableSystematicThinking:
-        type: boolean
-        default: true
-        description: "Enable systematic thinking tools"
-      enableVisualization:
-        type: boolean
-        default: true
-        description: "Enable visualization tools"
+      mentalModelsPath:
+        type: string
+        description: "Path to directory containing custom mental models"
     description: "Configuration options for the GoThink MCP server"
   commandFunction:
     # A function that produces the CLI command to start the MCP on stdio.
     |-
-    config => ({command:'node', args:['dist/index.js']})
+    config => ({command:'gothink', args:[]})
